@@ -34,7 +34,7 @@ exports.login = async (req, res, next) => {
             email: user.email,
             jwt: jwt.sign({
                 email: user.email,
-                id: user._id
+                id: user.id
             }, process.env.JWT_TOKEN)
         });
     } catch (error) {
