@@ -3,6 +3,7 @@ const Posts = require("../model/posts.model.js");
 
 const bcrypt = require('bcrypt');
 const dataset = async () => {
+    // Jeu de données User
     await User.create({
         email: "admin@admin.com",
         password: bcrypt.hashSync('12345', 10),
@@ -19,6 +20,7 @@ const dataset = async () => {
         nickname: "User2"
     });
 
+    // Jeu de données Posts
     await Posts.create({
         content: "Hello World!",
         userId: 3
@@ -30,6 +32,11 @@ const dataset = async () => {
     await Posts.create({
         content: "Another post for testing.",
         userId: 1
+    });
+    await Posts.create({
+        content: "Post with an image.",
+        userId: 1,
+        picture: "pixel-art-2025-06-101749650708067.png"
     });
 }
 

@@ -28,10 +28,17 @@ exports.createPost = async (req, res, next) => {
         if (!req.body.content) {
             return res.status(400).json({ message: "Content is required" });
         }
-        const post = await Posts.create({
+        const postData = {
             content: req.body.content,
             userId: userId
-        });
+        };
+
+        // Si image
+        if (req.file) {
+            postData.picture = req.file.filename;
+        }
+
+        const post = await Posts.create(postData);
         res.status(201).json(post);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -49,6 +56,12 @@ exports.updatePost = async (req, res, next) => {
             return res.status(403).json({ message: "Forbidden" });
         }
         post.content = req.body.content || post.content;
+
+        // Si image
+        if (req.file) {
+            post.picture = req.file.filename;
+        }
+
         await post.save();
         res.status(200).json(post);
     } catch (error) {
