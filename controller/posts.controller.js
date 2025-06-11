@@ -39,7 +39,7 @@ exports.createPost = async (req, res, next) => {
         }
 
         const post = await Posts.create(postData);
-        res.status(201).json(post);
+        res.status(201).json({ message: "Post created", post: post });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -63,7 +63,7 @@ exports.updatePost = async (req, res, next) => {
         }
 
         await post.save();
-        res.status(200).json(post);
+        res.status(200).json({ message: "Post updated", post: post });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -80,7 +80,7 @@ exports.deletePost = async (req, res, next) => {
             return res.status(403).json({ message: "Forbidden" });
         }
         await post.destroy();
-        res.status(200).send();
+        res.status(200).json({ message: "Post deleted" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -112,7 +112,7 @@ exports.addEmotion = async (req, res, next) => {
                 userId: userId,
                 postId: req.params.id
             });
-            return res.status(201).json(emotion);
+            return res.status(201).json({ message: "Emotion added", emotion: emotion });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -121,18 +121,19 @@ exports.addEmotion = async (req, res, next) => {
 
 exports.removeEmotion = async (req, res, next) => {
     try {
+        const userId = req.token.id;
         const post = await Posts.findByPk(req.params.id);
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
         const emotion = await post.getEmotions({
-            where: { userId: req.user.id }
+            where: { userId: userId }
         });
         if (emotion.length === 0) {
             return res.status(404).json({ message: "Emotion not found for this user" });
         }
         await emotion[0].destroy();
-        res.status(204).send();
+        res.status(200).json({ message: "Emotion removed" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
